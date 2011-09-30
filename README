@@ -1,0 +1,74 @@
+Demonstration of the Merkle Hellman and the RSA crypt algoritms. Both algoritms are implemented 
+for integers in the range 0 .. 2 ** 48 and are therefore not suitable for real crypt tasks.
+
+
+
+The Merkle Hellman example demonstrate the Merkle Hellman public key system using a Knapsack algorithm.
+======================================================================================================
+Algorithm description:
+
+ Create an easy Knapsack:
+   Is = {S1,S2, ..., Sn}
+
+  Then select a number M so M > Sum(Sn)
+
+  Then choose a number T where 0<T<M and GCD(M,T) = 1
+ 
+  Find the inverse element K to T (mod M) e.g K*T (mod M) = 1
+  
+  Create a difficult Knapsack as:
+
+  Ip = {T*S1 (mod M), T*S2(mod M), ..., T*Sn(mod M)}
+
+  We then have the following keys sets:
+
+  Public key  :  Ip
+  Secret Keys :  Is, K, M
+
+  A plain text i scrypted in the following way: 
+  
+  Decide a message block length e.g 8 and write the plain text = "ABC" as bitstrings at block length:
+ 
+    010000001 010000010 010000011
+
+  For each block a value is created as by adding the elements from Ip correspond to the bitpositions for the
+  '1' in the block.
+
+  010000001 => P2+P8
+  010000010 => P2+P7
+  010000011 => P2+P7+P8
+
+ To decrypt a the message block P2+P7+P8 do:
+  
+ L =  ((P2+P7+P8) * K ) mod M
+
+ Then solve the easy knapsack with L e.g find the elements in the knapsack that adds up to L
+
+
+The RSA algorithm descripton:
+============================
+
+ 1. Select two big primes P and Q and set N = P*Q.
+ 2. Calculate Phi(N) = (P-1)*(Q-1)
+ 3. Select an integer E where 0<E<Phi(N) and Gcd(E,Phi(N) = 1
+ 4. Find the inverse D to E so E*D mod Phi(N) = 1
+
+ We then have the folowing key sets:
+ 
+ Public key: (N,E)
+
+ Secret key:  D
+
+ The message to crypt is diveded into blocks og B's where 0<B<N.
+
+ To crypt the message each B is crypted to C by:
+
+    C = (B ** E) (mod N);
+
+ To decrypt the Cipher each C is decrypted by:
+
+   (C ** D) (mod N)
+
+
+**** NOTE The Number Theory Tools library is needed e.g the files Number-Theory-Tools.adb and Number-Theory-Tools.ads need to be in the same directory as
+the sources for Public-Key-Crypto-Algorithms
